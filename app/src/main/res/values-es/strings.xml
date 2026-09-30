@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Puma</string>
+
+    <!-- Setup -->
+    <string name="setup_title">Nueva carrera</string>
+    <string name="goal_label">Distancia objetivo</string>
+    <string name="unit_km">km</string>
+    <string name="unit_m">m</string>
+    <string name="target_label">Objetivo (opcional)</string>
+    <string name="target_none">Ninguno</string>
+    <string name="target_pace">Ritmo</string>
+    <string name="target_speed">Velocidad</string>
+    <string name="target_pace_hint">min:seg por km, ej. 5:30</string>
+    <string name="target_speed_hint">km/h, ej. 10,5</string>
+    <string name="target_equivalent_speed">≈ %1$s km/h</string>
+    <string name="target_equivalent_pace">≈ %1$s /km</string>
+    <string name="target_time">Tiempo</string>
+    <string name="target_time_hint">Tiempo final, ej. 30:00 o 1:45:00</string>
+    <string name="target_time_derived">≈ %1$s /km · %2$s km/h</string>
+    <string name="coach_label">Voz de entrenador</string>
+    <string name="coach_off">Apagado</string>
+    <string name="coach_soft">Suave</string>
+    <string name="coach_medium">Medio</string>
+    <string name="coach_hard">Duro</string>
+    <string name="coach_annoying">Insoportable</string>
+    <string name="coach_off_desc">Solo datos: avisos de distancia y de ritmo.</string>
+    <string name="coach_soft_desc">Ánimo amable y tranquilo de vez en cuando.</string>
+    <string name="coach_medium_desc">Un entrenador motivador: \"¡Vamos!\", \"¡Tú puedes!\"</string>
+    <string name="coach_hard_desc">Entrenador exigente. Te presiona fuerte y seguido si bajas el ritmo.</string>
+    <string name="coach_annoying_desc">Implacable. Te grita cada pocos segundos hasta que aceleres.</string>
+    <string name="schedule_ahead">%1$s adelantado</string>
+    <string name="schedule_behind">%1$s atrasado</string>
+    <string name="target_time_label">Tiempo objetivo</string>
+    <string name="goal_time_label">Tiempo en la meta</string>
+    <string name="beat_target">Superaste el objetivo por %1$s</string>
+    <string name="missed_target">Te faltaron %1$s para el objetivo</string>
+    <string name="announce_label">Avisos de distancia</string>
+    <string name="announce_none">Ninguno</string>
+    <string name="announce_500">500 m</string>
+    <string name="announce_1k">1 km</string>
+    <string name="announce_2k">2 km</string>
+    <string name="announce_custom">Personalizado</string>
+    <string name="custom_interval_label">Intervalo en metros</string>
+    <string name="alerts_label">Alertas de voz</string>
+    <string name="pace_alerts">Avisarme si voy más lento que mi objetivo</string>
+    <string name="back_on_pace">Avisarme cuando recupere el ritmo</string>
+    <string name="auto_stop">Detener automáticamente al llegar a la meta</string>
+    <string name="test_voice">Probar voz</string>
+    <string name="start">INICIAR</string>
+    <string name="error_goal">Introduce una distancia válida</string>
+    <string name="error_target">Introduce un objetivo válido</string>
+    <string name="error_interval">Introduce un intervalo válido</string>
+    <string name="voice_missing">Los datos de voz para tu idioma no están instalados.</string>
+    <string name="voice_unavailable">La síntesis de voz no está disponible en este dispositivo.</string>
+    <string name="install_voice">Instalar</string>
+    <string name="location_off">Activa la ubicación para comenzar tu carrera.</string>
+
+    <!-- Active run -->
+    <string name="get_ready">Prepárate</string>
+    <string name="of_goal">de %1$s km</string>
+    <string name="current_pace">Ritmo actual</string>
+    <string name="avg_pace">Ritmo prom.</string>
+    <string name="target">Objetivo</string>
+    <string name="per_km">/km</string>
+    <string name="pause">Pausa</string>
+    <string name="resume">Reanudar</string>
+    <string name="hold_to_stop">Mantén para detener</string>
+    <string name="paused">EN PAUSA</string>
+    <string name="goal_reached_badge">¡Meta alcanzada!</string>
+    <string name="gps_searching">GPS: buscando…</string>
+    <string name="gps_good">GPS: bueno</string>
+    <string name="gps_fair">GPS: regular</string>
+    <string name="gps_poor">GPS: débil</string>
+
+    <!-- Summary -->
+    <string name="summary_title">Carrera completada</string>
+    <string name="goal_reached">¡Meta alcanzada!</string>
+    <string name="goal_not_reached">Meta no alcanzada</string>
+    <string name="total_distance">Distancia</string>
+    <string name="total_time">Tiempo</string>
+    <string name="average_pace">Ritmo promedio</string>
+    <string name="pace_alerts_count">Alertas de ritmo</string>
+    <string name="new_run">Nueva carrera</string>
+
+    <!-- Permissions -->
+    <string name="perm_title">Se necesita acceso a la ubicación</string>
+    <string name="perm_body">Puma usa el GPS para medir tu distancia y ritmo mientras corres, incluso con la pantalla apagada. Las notificaciones muestran tu carrera en curso.</string>
+    <string name="perm_grant">Permitir acceso</string>
+    <string name="perm_settings">Abrir ajustes</string>
+    <string name="perm_denied">Se denegó el permiso de ubicación. Actívalo en los ajustes de la app para registrar tus carreras.</string>
+
+    <!-- Notification -->
+    <string name="notif_channel">Carrera activa</string>
+    <string name="notif_title_running">Corriendo</string>
+    <string name="notif_title_paused">En pausa</string>
+    <string name="notif_title_countdown">Iniciando…</string>
+    <string name="notif_text">%1$s km · %2$s · %3$s /km</string>
+    <string name="action_pause">Pausa</string>
+    <string name="action_resume">Reanudar</string>
+    <string name="action_stop">Detener</string>
+
+    <!-- Voice -->
+    <string name="tts_go">¡Vamos!</string>
+    <string name="tts_paused">Carrera en pausa.</string>
+    <string name="tts_resumed">Carrera reanudada.</string>
+    <string name="tts_milestone">%1$s. Tiempo %2$s. Ritmo promedio %3$s.</string>
+    <string name="tts_milestone_no_pace">%1$s. Tiempo %2$s.</string>
+    <string name="tts_halfway">¡Mitad del camino! %1$s en %2$s.</string>
+    <string name="tts_goal">¡Meta alcanzada! %1$s en %2$s.</string>
+    <string name="tts_goal_pace">¡Meta alcanzada! %1$s en %2$s. Ritmo promedio %3$s.</string>
+    <string name="tts_below_pace">Estás por debajo de tu ritmo objetivo. Actual %1$s, objetivo %2$s.</string>
+    <string name="tts_back_on_pace">Muy bien, recuperaste tu ritmo.</string>
+    <string name="tts_finished">Carrera terminada. %1$s en %2$s.</string>
+    <string name="tts_test">Entrenador de voz listo. ¡Buena carrera!</string>
+    <string name="tts_pace">%1$s por kilómetro</string>
+    <string name="tts_ahead">%1$s por delante del objetivo.</string>
+    <string name="tts_behind">%1$s por detrás del objetivo.</string>
+    <string name="tts_on_target">Justo en tu objetivo.</string>
+    <string name="tts_goal_beat">¡Superaste tu tiempo objetivo por %1$s!</string>
+    <string name="tts_goal_missed">%1$s más lento que tu tiempo objetivo.</string>
+    <string name="tts_goal_exact">¡Justo en tu tiempo objetivo!</string>
+
+    <string-array name="coach_soft_push">
+        <item>Vamos a subir un poquito el ritmo.</item>
+        <item>Tú puedes, solo un poco más rápido.</item>
+        <item>Tranquilo, intenta acelerar un poco.</item>
+        <item>Un poco más de esfuerzo. Lo tienes.</item>
+    </string-array>
+    <string-array name="coach_soft_encourage">
+        <item>Lo estás haciendo muy bien.</item>
+        <item>Qué buen ritmo, sigue así.</item>
+        <item>Muy bien. Mantente relajado.</item>
+        <item>Buen ritmo, sigue respirando.</item>
+    </string-array>
+    <string-array name="coach_soft_back">
+        <item>Eso es, justo en tu ritmo.</item>
+        <item>Muy bien, ya recuperaste el ritmo.</item>
+    </string-array>
+    <string-array name="coach_soft_almost">
+        <item>Ya casi llegas. Lo estás haciendo genial.</item>
+        <item>Falta poco. Sigue así.</item>
+    </string-array>
+    <string-array name="coach_soft_final">
+        <item>Últimos 200 metros. ¡Disfrútalos!</item>
+        <item>Solo faltan 200 metros. Muy bien.</item>
+    </string-array>
+
+    <string-array name="coach_medium_push">
+        <item>¡Vamos, sube el ritmo!</item>
+        <item>¡Tú puedes! ¡Un poco más rápido!</item>
+        <item>¡Fuerza! ¡Acelera!</item>
+        <item>¡Vamos, vamos, más rápido!</item>
+        <item>¡Ánimo, puedes ir más rápido que esto!</item>
+    </string-array>
+    <string-array name="coach_medium_encourage">
+        <item>¡Gran ritmo, sigue así!</item>
+        <item>¡Qué fuerte vas!</item>
+        <item>¡Eso es, mantenlo!</item>
+        <item>Vas muy bien. ¡Mantén ese ritmo!</item>
+    </string-array>
+    <string-array name="coach_medium_back">
+        <item>¡Sí! ¡Recuperaste el ritmo!</item>
+        <item>¡Ese es el ritmo, mantenlo!</item>
+    </string-array>
+    <string-array name="coach_medium_almost">
+        <item>¡Ya casi llegas, sigue empujando!</item>
+        <item>¡Estás muy cerca, no pares ahora!</item>
+    </string-array>
+    <string-array name="coach_medium_final">
+        <item>¡Últimos 200 metros, dalo todo!</item>
+        <item>¡Recta final, termina fuerte!</item>
+    </string-array>
+
+    <string-array name="coach_hard_push">
+        <item>¡Más rápido! ¡Te estás quedando atrás!</item>
+        <item>Empuja más fuerte. ¡Sin excusas!</item>
+        <item>¿Eso es todo lo que tienes? ¡Acelera!</item>
+        <item>¡Fuerza! ¡Saca lo que tienes y corre!</item>
+        <item>El dolor es temporal. ¡Sube el ritmo!</item>
+    </string-array>
+    <string-array name="coach_hard_encourage">
+        <item>Bien. Ahora mantenlo.</item>
+        <item>No te relajes. Mantén ese ritmo.</item>
+        <item>Ese es el nivel. Sostenlo.</item>
+    </string-array>
+    <string-array name="coach_hard_back">
+        <item>Mejor. No vuelvas a bajar.</item>
+        <item>Por fin. Mantén ese ritmo.</item>
+    </string-array>
+    <string-array name="coach_hard_almost">
+        <item>Ya casi. ¡No bajes el ritmo ahora!</item>
+        <item>Termina lo que empezaste. ¡Empuja!</item>
+    </string-array>
+    <string-array name="coach_hard_final">
+        <item>¡200 metros! ¡Todo lo que tienes, ya!</item>
+        <item>¡Último esfuerzo! ¡Vacía el tanque!</item>
+    </string-array>
+
+    <string-array name="coach_annoying_push">
+        <item>¡Más rápido! ¡Más rápido! ¡Más rápido!</item>
+        <item>¡Muévete, muévete, muévete!</item>
+        <item>¡Vamos! ¡Vamos! ¡Vamos!</item>
+        <item>¡Levanta esos pies!</item>
+        <item>¿Te paraste por un café? ¡Corre!</item>
+        <item>¡Mi abuela corre más rápido que tú!</item>
+        <item>¿Estás corriendo o paseando? ¡Acelera!</item>
+    </string-array>
+    <string-array name="coach_annoying_encourage">
+        <item>¡Sigue! ¡Ni se te ocurra bajar el ritmo!</item>
+        <item>¡Bien! ¡Ahora más rápido!</item>
+        <item>¡Dale! ¡Dale! ¡Dale!</item>
+        <item>Te estoy vigilando. ¡Sigue así!</item>
+    </string-array>
+    <string-array name="coach_annoying_back">
+        <item>¡Ya era hora! ¡Mantenlo ahí!</item>
+        <item>¡Ahí está! ¡No lo pierdas!</item>
+    </string-array>
+    <string-array name="coach_annoying_almost">
+        <item>¡Ya casi llegas! ¡Vamos! ¡Vamos! ¡Vamos!</item>
+        <item>Casi terminas. ¡Nada de caminar!</item>
+    </string-array>
+    <string-array name="coach_annoying_final">
+        <item>¡200 metros! ¡Sprint! ¡Sprint! ¡Sprint!</item>
+        <item>¡El último tramo! ¡Corre en serio!</item>
+    </string-array>
+    <plurals name="tts_kilometers">
+        <item quantity="one">%1$s kilómetro</item>
+        <item quantity="many">%1$s kilómetros</item>
+        <item quantity="other">%1$s kilómetros</item>
+    </plurals>
+    <plurals name="tts_meters">
+        <item quantity="one">%1$s metro</item>
+        <item quantity="many">%1$s metros</item>
+        <item quantity="other">%1$s metros</item>
+    </plurals>
+    <plurals name="tts_hours">
+        <item quantity="one">%1$d hora</item>
+        <item quantity="many">%1$d horas</item>
+        <item quantity="other">%1$d horas</item>
+    </plurals>
+    <plurals name="tts_minutes">
+        <item quantity="one">%1$d minuto</item>
+        <item quantity="many">%1$d minutos</item>
+        <item quantity="other">%1$d minutos</item>
+    </plurals>
+    <plurals name="tts_seconds">
+        <item quantity="one">%1$d segundo</item>
+        <item quantity="many">%1$d segundos</item>
+        <item quantity="other">%1$d segundos</item>
+    </plurals>
+</resources>

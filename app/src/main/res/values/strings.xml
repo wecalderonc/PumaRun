@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Puma</string>
+
+    <!-- Setup -->
+    <string name="setup_title">New run</string>
+    <string name="goal_label">Distance goal</string>
+    <string name="unit_km">km</string>
+    <string name="unit_m">m</string>
+    <string name="target_label">Target (optional)</string>
+    <string name="target_none">None</string>
+    <string name="target_pace">Pace</string>
+    <string name="target_speed">Speed</string>
+    <string name="target_pace_hint">min:sec per km, e.g. 5:30</string>
+    <string name="target_speed_hint">km/h, e.g. 10.5</string>
+    <string name="target_equivalent_speed">≈ %1$s km/h</string>
+    <string name="target_equivalent_pace">≈ %1$s /km</string>
+    <string name="target_time">Time</string>
+    <string name="target_time_hint">Finish time, e.g. 30:00 or 1:45:00</string>
+    <string name="target_time_derived">≈ %1$s /km · %2$s km/h</string>
+    <string name="coach_label">Trainer voice</string>
+    <string name="coach_off">Off</string>
+    <string name="coach_soft">Soft</string>
+    <string name="coach_medium">Medium</string>
+    <string name="coach_hard">Hard</string>
+    <string name="coach_annoying">Annoying</string>
+    <string name="coach_off_desc">Just the facts: milestones and pace warnings.</string>
+    <string name="coach_soft_desc">Gentle, kind encouragement now and then.</string>
+    <string name="coach_medium_desc">A motivating coach: \"Come on!\", \"You can do it!\"</string>
+    <string name="coach_hard_desc">Tough trainer. Pushes hard and often when you slow down.</string>
+    <string name="coach_annoying_desc">Relentless. Yells every few seconds until you speed up.</string>
+    <string name="schedule_ahead">%1$s ahead</string>
+    <string name="schedule_behind">%1$s behind</string>
+    <string name="target_time_label">Target time</string>
+    <string name="goal_time_label">Time at goal</string>
+    <string name="beat_target">Beat target by %1$s</string>
+    <string name="missed_target">Missed target by %1$s</string>
+    <string name="announce_label">Distance announcements</string>
+    <string name="announce_none">None</string>
+    <string name="announce_500">500 m</string>
+    <string name="announce_1k">1 km</string>
+    <string name="announce_2k">2 km</string>
+    <string name="announce_custom">Custom</string>
+    <string name="custom_interval_label">Interval in meters</string>
+    <string name="alerts_label">Voice alerts</string>
+    <string name="pace_alerts">Warn me when I\'m slower than my target</string>
+    <string name="back_on_pace">Tell me when I\'m back on pace</string>
+    <string name="auto_stop">Stop automatically at goal</string>
+    <string name="test_voice">Test voice</string>
+    <string name="start">START</string>
+    <string name="error_goal">Enter a valid distance</string>
+    <string name="error_target">Enter a valid target</string>
+    <string name="error_interval">Enter a valid interval</string>
+    <string name="voice_missing">Voice data for your language is not installed.</string>
+    <string name="voice_unavailable">Text-to-speech is not available on this device.</string>
+    <string name="install_voice">Install</string>
+    <string name="location_off">Turn on location to start your run.</string>
+
+    <!-- Active run -->
+    <string name="get_ready">Get ready</string>
+    <string name="of_goal">of %1$s km</string>
+    <string name="current_pace">Current pace</string>
+    <string name="avg_pace">Avg pace</string>
+    <string name="target">Target</string>
+    <string name="per_km">/km</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="hold_to_stop">Hold to stop</string>
+    <string name="paused">PAUSED</string>
+    <string name="goal_reached_badge">Goal reached!</string>
+    <string name="gps_searching">GPS: searching…</string>
+    <string name="gps_good">GPS: good</string>
+    <string name="gps_fair">GPS: fair</string>
+    <string name="gps_poor">GPS: weak</string>
+
+    <!-- Summary -->
+    <string name="summary_title">Run complete</string>
+    <string name="goal_reached">Goal reached!</string>
+    <string name="goal_not_reached">Goal not reached</string>
+    <string name="total_distance">Distance</string>
+    <string name="total_time">Time</string>
+    <string name="average_pace">Average pace</string>
+    <string name="pace_alerts_count">Pace alerts</string>
+    <string name="new_run">New run</string>
+
+    <!-- Permissions -->
+    <string name="perm_title">Location access needed</string>
+    <string name="perm_body">Puma uses GPS to measure your distance and pace while you run, including when the screen is off. Notifications show your run while it is in progress.</string>
+    <string name="perm_grant">Allow access</string>
+    <string name="perm_settings">Open settings</string>
+    <string name="perm_denied">Location permission was denied. Enable it in the app settings to track your runs.</string>
+
+    <!-- Notification -->
+    <string name="notif_channel">Active run</string>
+    <string name="notif_title_running">Running</string>
+    <string name="notif_title_paused">Paused</string>
+    <string name="notif_title_countdown">Starting…</string>
+    <string name="notif_text">%1$s km · %2$s · %3$s /km</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+    <string name="action_stop">Stop</string>
+
+    <!-- Voice -->
+    <string name="tts_go">Go!</string>
+    <string name="tts_paused">Run paused.</string>
+    <string name="tts_resumed">Run resumed.</string>
+    <string name="tts_milestone">%1$s. Time %2$s. Average pace %3$s.</string>
+    <string name="tts_milestone_no_pace">%1$s. Time %2$s.</string>
+    <string name="tts_halfway">Halfway there! %1$s in %2$s.</string>
+    <string name="tts_goal">Goal reached! %1$s in %2$s.</string>
+    <string name="tts_goal_pace">Goal reached! %1$s in %2$s. Average pace %3$s.</string>
+    <string name="tts_below_pace">You are below your target pace. Current %1$s, target %2$s.</string>
+    <string name="tts_back_on_pace">Good job, you are back on pace.</string>
+    <string name="tts_finished">Run finished. %1$s in %2$s.</string>
+    <string name="tts_test">Voice coach ready. Have a great run!</string>
+    <string name="tts_pace">%1$s per kilometer</string>
+    <string name="tts_ahead">%1$s ahead of target.</string>
+    <string name="tts_behind">%1$s behind target.</string>
+    <string name="tts_on_target">Right on target.</string>
+    <string name="tts_goal_beat">You beat your target time by %1$s!</string>
+    <string name="tts_goal_missed">%1$s slower than your target time.</string>
+    <string name="tts_goal_exact">Exactly on your target time!</string>
+
+    <string-array name="coach_soft_push">
+        <item>Let\'s pick it up a little.</item>
+        <item>You can do this, just a bit faster.</item>
+        <item>Nice and easy, try to speed up slightly.</item>
+        <item>A little more effort. You\'ve got this.</item>
+    </string-array>
+    <string-array name="coach_soft_encourage">
+        <item>You\'re doing great.</item>
+        <item>Lovely pace, keep it up.</item>
+        <item>Well done. Stay relaxed.</item>
+        <item>Nice rhythm, keep breathing.</item>
+    </string-array>
+    <string-array name="coach_soft_back">
+        <item>There you go, right on pace.</item>
+        <item>Nice, you\'re back on track.</item>
+    </string-array>
+    <string-array name="coach_soft_almost">
+        <item>Almost there. You\'re doing wonderfully.</item>
+        <item>Not far now. Keep going.</item>
+    </string-array>
+    <string-array name="coach_soft_final">
+        <item>Last 200 meters. Enjoy it!</item>
+        <item>Just 200 meters to go. Well done.</item>
+    </string-array>
+
+    <string-array name="coach_medium_push">
+        <item>Come on, pick it up!</item>
+        <item>You can do it! A little faster!</item>
+        <item>Strength! Push the pace!</item>
+        <item>Let\'s go, speed up!</item>
+        <item>Stay strong, you\'re better than this pace!</item>
+    </string-array>
+    <string-array name="coach_medium_encourage">
+        <item>Great pace, keep it going!</item>
+        <item>Strong running!</item>
+        <item>That\'s it, stay on it!</item>
+        <item>Looking good. Keep that rhythm!</item>
+    </string-array>
+    <string-array name="coach_medium_back">
+        <item>Yes! Back on pace!</item>
+        <item>That\'s the pace. Hold it!</item>
+    </string-array>
+    <string-array name="coach_medium_almost">
+        <item>Almost there, keep pushing!</item>
+        <item>You\'re so close. Don\'t stop now!</item>
+    </string-array>
+    <string-array name="coach_medium_final">
+        <item>Final 200 meters. Give it everything!</item>
+        <item>Last stretch. Strong finish!</item>
+    </string-array>
+
+    <string-array name="coach_hard_push">
+        <item>Faster! You\'re falling behind!</item>
+        <item>Push harder. No excuses!</item>
+        <item>Is that all you\'ve got? Speed up!</item>
+        <item>Strength! Dig deep and go!</item>
+        <item>Pain is temporary. Pick it up!</item>
+    </string-array>
+    <string-array name="coach_hard_encourage">
+        <item>Good. Now hold it.</item>
+        <item>Don\'t relax. Keep that pace.</item>
+        <item>That\'s the standard. Maintain it.</item>
+    </string-array>
+    <string-array name="coach_hard_back">
+        <item>Better. Don\'t slow down again.</item>
+        <item>Finally. Hold that pace.</item>
+    </string-array>
+    <string-array name="coach_hard_almost">
+        <item>Almost there. No slowing down now!</item>
+        <item>Finish what you started. Push!</item>
+    </string-array>
+    <string-array name="coach_hard_final">
+        <item>200 meters! Everything you have, now!</item>
+        <item>Final push! Empty the tank!</item>
+    </string-array>
+
+    <string-array name="coach_annoying_push">
+        <item>Faster! Faster! Faster!</item>
+        <item>Move it, move it, move it!</item>
+        <item>Come on! Come on! Come on!</item>
+        <item>Pick up those feet!</item>
+        <item>Did you stop for coffee? Go!</item>
+        <item>My grandma runs faster than this!</item>
+        <item>Are you running or taking a walk? Speed up!</item>
+    </string-array>
+    <string-array name="coach_annoying_encourage">
+        <item>Keep going! Don\'t you dare slow down!</item>
+        <item>Good! Now faster!</item>
+        <item>Go! Go! Go!</item>
+        <item>I\'m watching you. Keep it up!</item>
+    </string-array>
+    <string-array name="coach_annoying_back">
+        <item>About time! Keep it there!</item>
+        <item>There it is! Don\'t lose it!</item>
+    </string-array>
+    <string-array name="coach_annoying_almost">
+        <item>Almost there! Go! Go! Go!</item>
+        <item>Nearly done. No walking!</item>
+    </string-array>
+    <string-array name="coach_annoying_final">
+        <item>200 meters! Sprint! Sprint! Sprint!</item>
+        <item>Last bit! Run like you mean it!</item>
+    </string-array>
+    <plurals name="tts_kilometers">
+        <item quantity="one">%1$s kilometer</item>
+        <item quantity="other">%1$s kilometers</item>
+    </plurals>
+    <plurals name="tts_meters">
+        <item quantity="one">%1$s meter</item>
+        <item quantity="other">%1$s meters</item>
+    </plurals>
+    <plurals name="tts_hours">
+        <item quantity="one">%1$d hour</item>
+        <item quantity="other">%1$d hours</item>
+    </plurals>
+    <plurals name="tts_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
+    <plurals name="tts_seconds">
+        <item quantity="one">%1$d second</item>
+        <item quantity="other">%1$d seconds</item>
+    </plurals>
+</resources>
