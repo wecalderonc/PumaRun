@@ -1,7 +1,7 @@
-# Puma
+# PumaRun
 
 A GPS running app for Android. Set a distance goal and optionally a target (pace, speed, or finish
-time), then run. Puma tracks distance with GPS in a foreground service and talks to you: distance
+time), then run. PumaRun tracks distance with GPS in a foreground service and talks to you: distance
 milestones with how far ahead/behind schedule you are, halfway, goal reached, pace warnings, and an
 optional trainer voice that pushes you. UI and voice are in English or Spanish, following the device
 language.
@@ -9,7 +9,7 @@ language.
 ## Targets
 
 - **Pace** (min:sec per km), **Speed** (km/h), or **Time**: a finish time for the goal distance, e.g.
-  5 km in 30:00. Puma derives the pace (6:00 /km). The -30s / -15s / +15s / +30s buttons make it easy to
+  5 km in 30:00. PumaRun derives the pace (6:00 /km). The -30s / -15s / +15s / +30s buttons make it easy to
   aim a bit faster each day; the last target is remembered.
 - During the run the screen shows how far ahead/behind schedule you are; the summary shows your time at
   the goal vs. the target time.
@@ -51,6 +51,8 @@ Contributor and AI-agent notes (emulator setup, test workflow, gotchas) are in [
   signal gap) and ignores stationary drift.
 - `domain/SessionEngine` accumulates distance and active time (pauses excluded).
 - `domain/PaceCalculator` gives current pace over a 30 s rolling window.
+- `ui/map/RunMap` shows where you are (OpenStreetMap, no API key) on setup, during the run
+  (with the route of this session), and on the summary.
 - `domain/AnnouncementScheduler` decides what to say and when; `domain/CoachStyle` holds each trainer's
   timing. `voice/Phrases` turns that into localized sentences.
 - `voice/VoiceCoach` speaks via TextToSpeech and ducks music while talking. Every spoken line is logged
@@ -70,7 +72,7 @@ Start the run in the app, then start the feeder. `--start-km` continues a previo
 Alternatively `tools/make_gpx.py` writes a GPX file for Extended controls > Location > Routes.
 
 To test Spanish without changing the whole device:
-`adb shell cmd locale set-app-locales com.pumaconcolor.run --locales es-MX` (reset with `--locales ""`).
+`adb shell cmd locale set-app-locales com.pumarun.app --locales es-MX` (reset with `--locales ""`).
 
 Real-world checks: run with the screen locked and music playing (music should duck, not stop), and
 pause/resume from the notification.
@@ -78,10 +80,15 @@ pause/resume from the notification.
 ## Battery optimization
 
 Some manufacturers (Xiaomi, Huawei, Samsung, OnePlus and others) aggressively kill background apps even
-with a foreground service. If tracking stops with the screen off, set Puma's battery usage to
+with a foreground service. If tracking stops with the screen off, set PumaRun's battery usage to
 "Unrestricted" / disable battery optimization for the app. See https://dontkillmyapp.com for
 device-specific steps.
 
+## Recorded tracks
+
+Finishing a run saves it on the phone (Room). The Tracks tab lists them; opening one shows the route
+on the map. Deleting a track removes it from the phone.
+
 ## v2
 
-Saved tracks and history (Room implementation of `data/SessionRepository`), map drawing, and login.
+Login and accounts. Run history and the live map are already in the app.

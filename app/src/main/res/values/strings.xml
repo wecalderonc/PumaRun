@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Puma</string>
+    <string name="app_name">PumaRun</string>
 
     <!-- Setup -->
     <string name="setup_title">New run</string>
@@ -72,6 +72,9 @@
     <string name="gps_good">GPS: good</string>
     <string name="gps_fair">GPS: fair</string>
     <string name="gps_poor">GPS: weak</string>
+    <string name="map_where">Where you are</string>
+    <string name="map_recenter">Center on me</string>
+    <string name="map_waiting">Waiting for GPS…</string>
 
     <!-- Summary -->
     <string name="summary_title">Run complete</string>
@@ -82,10 +85,19 @@
     <string name="average_pace">Average pace</string>
     <string name="pace_alerts_count">Pace alerts</string>
     <string name="new_run">New run</string>
+    <string name="tab_new_run">New run</string>
+    <string name="tab_tracks">Tracks</string>
+    <string name="tracks_title">Recorded tracks</string>
+    <string name="tracks_empty">No tracks yet. Finish a run and it will show up here.</string>
+    <string name="tracks_missing">This track is no longer saved.</string>
+    <string name="tracks_delete">Delete track</string>
+    <string name="tracks_delete_body">This removes the route from the phone. It cannot be undone.</string>
+    <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
 
     <!-- Permissions -->
     <string name="perm_title">Location access needed</string>
-    <string name="perm_body">Puma uses GPS to measure your distance and pace while you run, including when the screen is off. Notifications show your run while it is in progress.</string>
+    <string name="perm_body">PumaRun uses GPS to measure your distance and pace while you run, including when the screen is off. Notifications show your run while it is in progress.</string>
     <string name="perm_grant">Allow access</string>
     <string name="perm_settings">Open settings</string>
     <string name="perm_denied">Location permission was denied. Enable it in the app settings to track your runs.</string>

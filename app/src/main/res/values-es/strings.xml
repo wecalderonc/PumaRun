@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Puma</string>
+    <string name="app_name">PumaRun</string>
 
     <!-- Setup -->
     <string name="setup_title">Nueva carrera</string>
@@ -72,6 +72,9 @@
     <string name="gps_good">GPS: bueno</string>
     <string name="gps_fair">GPS: regular</string>
     <string name="gps_poor">GPS: débil</string>
+    <string name="map_where">Dónde estás</string>
+    <string name="map_recenter">Centrar en mí</string>
+    <string name="map_waiting">Esperando el GPS…</string>
 
     <!-- Summary -->
     <string name="summary_title">Carrera completada</string>
@@ -82,10 +85,19 @@
     <string name="average_pace">Ritmo promedio</string>
     <string name="pace_alerts_count">Alertas de ritmo</string>
     <string name="new_run">Nueva carrera</string>
+    <string name="tab_new_run">Nueva</string>
+    <string name="tab_tracks">Recorridos</string>
+    <string name="tracks_title">Recorridos</string>
+    <string name="tracks_empty">Todavía no hay recorridos. Termina una carrera y aparecerá aquí.</string>
+    <string name="tracks_missing">Este recorrido ya no está guardado.</string>
+    <string name="tracks_delete">Eliminar recorrido</string>
+    <string name="tracks_delete_body">Esto borra la ruta del teléfono. No se puede deshacer.</string>
+    <string name="cancel">Cancelar</string>
+    <string name="back">Atrás</string>
 
     <!-- Permissions -->
     <string name="perm_title">Se necesita acceso a la ubicación</string>
-    <string name="perm_body">Puma usa el GPS para medir tu distancia y ritmo mientras corres, incluso con la pantalla apagada. Las notificaciones muestran tu carrera en curso.</string>
+    <string name="perm_body">PumaRun usa el GPS para medir tu distancia y ritmo mientras corres, incluso con la pantalla apagada. Las notificaciones muestran tu carrera en curso.</string>
     <string name="perm_grant">Permitir acceso</string>
     <string name="perm_settings">Abrir ajustes</string>
     <string name="perm_denied">Se denegó el permiso de ubicación. Actívalo en los ajustes de la app para registrar tus carreras.</string>

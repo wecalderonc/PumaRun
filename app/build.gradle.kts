@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.pumaconcolor.run"
+    namespace = "com.pumarun.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.pumaconcolor.run"
+        applicationId = "com.pumarun.app"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -50,6 +50,10 @@ android {
     }
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -65,10 +69,14 @@ dependencies {
     implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.play.services.location)
+    implementation(libs.osmdroid)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.play.services)
     debugImplementation(libs.androidx.compose.ui.tooling)

@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for AI agents working on Puma, a GPS running app for Android (Kotlin, Jetpack Compose,
+Guidance for AI agents working on PumaRun, a GPS running app for Android (Kotlin, Jetpack Compose,
 Hilt). Read `README.md` for the product overview; this file covers how to build, test and change it.
 
 ## Environment
@@ -40,6 +40,8 @@ together, not one at a time.
 | Foreground service and notification | `service/RunTrackingService.kt`, `service/RunNotification.kt` |
 | Setup inputs, validation, saved settings | `ui/setup/*`, `data/SettingsRepository.kt` |
 | Screens | `ui/setup`, `ui/active`, `ui/summary`, `ui/permissions` |
+| Live map (current position and this session's route) | `ui/map/RunMap.kt`; points come from `SessionEngine` (`position`, `track`) |
+| Saved tracks list and detail | `data/RoomSessionRepository.kt`, `ui/history/HistoryScreens.kt`. Saved when a run stops. |
 
 Key rules:
 
@@ -94,7 +96,7 @@ Gotchas learned the hard way:
   coordinates.
 - Hold-to-stop needs a long press: `adb shell input swipe X Y X Y 2200`.
 - Play Store images cannot change the system locale over adb. Use per-app locales:
-  `adb shell cmd locale set-app-locales com.pumaconcolor.run --locales es-MX` (reset with `--locales ""`).
+  `adb shell cmd locale set-app-locales com.pumarun.app --locales es-MX` (reset with `--locales ""`).
 - Screenshots: `adb exec-out screencap -p > shot.png`.
 
 ## Conventions
