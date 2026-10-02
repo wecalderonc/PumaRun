@@ -9,7 +9,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.pumarun.app.ui.PumaNavHost
-import com.pumarun.app.ui.permissions.PermissionGate
 import com.pumarun.app.ui.theme.PumaTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,9 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PumaTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    PermissionGate {
-                        PumaNavHost()
-                    }
+                    PumaNavHost()
                 }
             }
         }

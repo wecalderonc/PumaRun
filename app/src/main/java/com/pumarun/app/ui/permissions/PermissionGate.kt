@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +40,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.pumarun.app.R
+import com.pumarun.app.ui.privacy.PrivacyPolicyDialog
 
 private val requiredPermissions = buildList {
     add(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -50,12 +52,17 @@ private fun Context.hasFineLocation() =
     ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
         PackageManager.PERMISSION_GRANTED
 
+private fun Context.hasCoarseLocation() =
+    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) ==
+        PackageManager.PERMISSION_GRANTED
+
 /** Shows [content] only once precise location is granted. Notifications are requested but optional. */
 @Composable
 fun PermissionGate(content: @Composable () -> Unit) {
     val context = LocalContext.current
     var granted by rememberSaveable { mutableStateOf(context.hasFineLocation()) }
     var permanentlyDenied by rememberSaveable { mutableStateOf(false) }
+    var showPrivacy by rememberSaveable { mutableStateOf(false) }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         granted = context.hasFineLocation()
@@ -76,6 +83,7 @@ fun PermissionGate(content: @Composable () -> Unit) {
         return
     }
 
+    val approximateOnly = context.hasCoarseLocation()
     Column(
         modifier = Modifier.fillMaxSize().padding(32.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
@@ -89,11 +97,17 @@ fun PermissionGate(content: @Composable () -> Unit) {
         )
         Text(stringResource(R.string.perm_title), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
         Text(
-            stringResource(if (permanentlyDenied) R.string.perm_denied else R.string.perm_body),
+            stringResource(
+                when {
+                    approximateOnly -> R.string.perm_precise_required
+                    permanentlyDenied -> R.string.perm_denied
+                    else -> R.string.perm_body
+                },
+            ),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
         )
-        if (permanentlyDenied) {
+        if (permanentlyDenied || approximateOnly) {
             OutlinedButton(
                 onClick = {
                     context.startActivity(
@@ -108,5 +122,10 @@ fun PermissionGate(content: @Composable () -> Unit) {
                 Text(stringResource(R.string.perm_grant))
             }
         }
+        TextButton(onClick = { showPrivacy = true }) {
+            Text(stringResource(R.string.privacy_policy_button))
+        }
     }
+
+    PrivacyPolicyDialog(visible = showPrivacy, onDismiss = { showPrivacy = false })
 }

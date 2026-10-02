@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.pumarun.app.BuildConfig
 import com.pumarun.app.R
 import com.pumarun.app.domain.LatLon
 import org.osmdroid.config.Configuration
@@ -144,6 +145,17 @@ fun RunMap(
                 Icon(Icons.Filled.MyLocation, contentDescription = stringResource(R.string.map_recenter))
             }
         }
+        Surface(
+            modifier = Modifier.align(Alignment.TopEnd).padding(8.dp),
+            shape = MaterialTheme.shapes.extraSmall,
+            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.88f),
+        ) {
+            Text(
+                stringResource(R.string.map_attribution),
+                modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+                style = MaterialTheme.typography.labelSmall,
+            )
+        }
     }
 }
 
@@ -173,7 +185,8 @@ private fun render(map: MapView, context: Context, position: LatLon?, track: Lis
 
 private fun configureOsmdroid(context: Context) {
     val config = Configuration.getInstance()
-    config.userAgentValue = context.packageName
+    config.userAgentValue =
+        "PumaRun/${BuildConfig.VERSION_NAME} (+https://github.com/wecalderonc/puma-concolor)"
     config.osmdroidBasePath = File(context.cacheDir, "osmdroid")
     config.osmdroidTileCache = File(context.cacheDir, "osmdroid/tiles")
 }

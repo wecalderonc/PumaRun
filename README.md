@@ -31,7 +31,7 @@ without repeating back to back.
 
 ## Build
 
-Requirements: JDK 17, Android SDK 35 (Android Studio bundles both).
+Requirements: JDK 17, Android SDK 36 (Android Studio bundles both).
 
 ```bash
 ./gradlew assembleDebug          # APK in app/build/outputs/apk/debug/
@@ -41,6 +41,29 @@ Requirements: JDK 17, Android SDK 35 (Android Studio bundles both).
 
 If building from the command line, point `local.properties` at your SDK (`sdk.dir=...`).
 Contributor and AI-agent notes (emulator setup, test workflow, gotchas) are in [AGENTS.md](AGENTS.md).
+
+## Google Play release
+
+The app targets Android 16 (API 36), uses `com.pumarun.app`, and requires a signed
+release bundle. Configure these properties in your user-level Gradle properties or
+another uncommitted Gradle properties file before running `bundleRelease`:
+
+```properties
+releaseStoreFile=/absolute/path/to/pumarun-upload.jks
+releaseStorePassword=...
+releaseKeyAlias=pumarun-upload
+releaseKeyPassword=...
+```
+
+Keep the keystore and passwords out of Git, and enroll the app in Google Play
+App Signing. The release signing configuration is intentionally inactive until all
+four properties are present.
+
+The draft privacy policy is in
+[docs/privacy-policy.md](docs/privacy-policy.md). Host it at a stable public HTTPS
+URL and use that URL in both Play Console and the app listing before publishing.
+Complete the Play Console Data Safety, Health Apps, and location foreground-service
+declarations as well.
 
 ## How it works
 

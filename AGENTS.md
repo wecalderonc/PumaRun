@@ -6,7 +6,7 @@ Hilt). Read `README.md` for the product overview; this file covers how to build,
 ## Environment
 
 - JDK 17 is required. On this machine it is Homebrew's: `export JAVA_HOME=/opt/homebrew/opt/openjdk@17`.
-- Android SDK: `/opt/homebrew/share/android-commandlinetools` (set in `local.properties`, which is
+- Android SDK 36: `/opt/homebrew/share/android-commandlinetools` (set in `local.properties`, which is
   gitignored; create it with `sdk.dir=...` on a new machine).
 - `adb`: `$SDK/platform-tools/adb`. Emulator: `$SDK/emulator/emulator`. AVD name: `puma_test`
   (Pixel 7, Android 35, Google Play image, arm64).

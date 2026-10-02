@@ -32,6 +32,7 @@ import com.pumarun.app.service.SessionManager
 import com.pumarun.app.ui.active.ActiveRunScreen
 import com.pumarun.app.ui.history.HistoryScreen
 import com.pumarun.app.ui.history.TrackDetailScreen
+import com.pumarun.app.ui.permissions.PermissionGate
 import com.pumarun.app.ui.setup.SetupScreen
 import com.pumarun.app.ui.summary.SummaryScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -120,7 +121,9 @@ fun PumaNavHost(navViewModel: NavViewModel = hiltViewModel()) {
             startDestination = Routes.SETUP,
             modifier = Modifier.padding(padding),
         ) {
-            composable(Routes.SETUP) { SetupScreen() }
+            composable(Routes.SETUP) {
+                PermissionGate { SetupScreen() }
+            }
             composable(Routes.ACTIVE) { ActiveRunScreen() }
             composable(Routes.SUMMARY) { SummaryScreen() }
             composable(Routes.HISTORY) {
