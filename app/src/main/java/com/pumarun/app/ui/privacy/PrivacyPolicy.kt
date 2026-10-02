@@ -1,41 +1,18 @@
 package com.pumarun.app.ui.privacy
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.pumarun.app.R
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 
-@Composable
-fun PrivacyPolicyDialog(
-    visible: Boolean,
-    onDismiss: () -> Unit,
-) {
-    if (!visible) return
+private const val PRIVACY_POLICY_URL = "https://wecalderonc.github.io/PumaRun/"
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.privacy_policy_title)) },
-        text = {
-            Column(
-                modifier = Modifier
-                    .heightIn(max = 480.dp)
-                    .verticalScroll(rememberScrollState()),
-            ) {
-                Text(stringResource(R.string.privacy_policy_body))
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+/** Opens the published privacy policy. Spanish devices land on the Spanish section. */
+fun Context.openPrivacyPolicy() {
+    val spanish = resources.configuration.locales[0].language == "es"
+    val url = if (spanish) "$PRIVACY_POLICY_URL#es" else "$PRIVACY_POLICY_URL#en"
+    try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    } catch (_: ActivityNotFoundException) {
+    }
 }

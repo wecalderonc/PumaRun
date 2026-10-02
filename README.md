@@ -59,9 +59,11 @@ Keep the keystore and passwords out of Git, and enroll the app in Google Play
 App Signing. The release signing configuration is intentionally inactive until all
 four properties are present.
 
-The draft privacy policy is in
-[docs/privacy-policy.md](docs/privacy-policy.md). Host it at a stable public HTTPS
-URL and use that URL in both Play Console and the app listing before publishing.
+The privacy policy is published at
+<https://wecalderonc.github.io/PumaRun/>.
+Use that URL in Play Console. The app opens the same page from its privacy policy
+button. The English source is [docs/privacy-policy.md](docs/privacy-policy.md); the
+page also includes the Spanish text.
 Complete the Play Console Data Safety, Health Apps, and location foreground-service
 declarations as well.
 

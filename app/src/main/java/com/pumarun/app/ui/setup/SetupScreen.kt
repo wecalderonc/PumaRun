@@ -72,7 +72,7 @@ import com.pumarun.app.location.LocationSettingsChecker
 import com.pumarun.app.location.LocationSettingsResult
 import com.pumarun.app.service.RunTrackingService
 import com.pumarun.app.ui.map.RunMap
-import com.pumarun.app.ui.privacy.PrivacyPolicyDialog
+import com.pumarun.app.ui.privacy.openPrivacyPolicy
 import com.pumarun.app.voice.VoiceCoach
 import kotlinx.coroutines.launch
 
@@ -89,7 +89,6 @@ fun SetupScreen(viewModel: SetupViewModel = hiltViewModel()) {
     val snackbar = remember { SnackbarHostState() }
     val locationOffMessage = stringResource(R.string.location_off)
     var pendingConfig by remember { mutableStateOf<SessionConfig?>(null) }
-    var showPrivacy by remember { mutableStateOf(false) }
 
     val resolutionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
@@ -359,14 +358,12 @@ fun SetupScreen(viewModel: SetupViewModel = hiltViewModel()) {
             ) {
                 Text(stringResource(R.string.start), fontSize = 22.sp, fontWeight = FontWeight.Bold)
             }
-            TextButton(onClick = { showPrivacy = true }, modifier = Modifier.fillMaxWidth()) {
+            TextButton(onClick = { context.openPrivacyPolicy() }, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.privacy_policy_button))
             }
             Spacer(Modifier.height(16.dp))
         }
     }
-
-    PrivacyPolicyDialog(visible = showPrivacy, onDismiss = { showPrivacy = false })
 }
 
 private fun CoachStyle.labelRes() = when (this) {

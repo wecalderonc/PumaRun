@@ -1,5 +1,7 @@
 # PumaRun Privacy Policy
 
+Published at <https://wecalderonc.github.io/PumaRun/>.
+
 Last updated: October 1, 2026
 
 PumaRun is a GPS running app. This policy explains what the app accesses, how it is

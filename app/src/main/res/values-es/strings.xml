@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PumaRun</string>
-    <string name="privacy_policy_title">Política de privacidad de PumaRun</string>
     <string name="privacy_policy_button">Política de privacidad</string>
-    <string name="close">Cerrar</string>
-    <string name="privacy_policy_body">Última actualización: 1 de octubre de 2026.\n\nPumaRun usa la ubicación del dispositivo mientras utilizas las funciones de carrera. La ubicación se usa para mostrar tu posición, medir distancia y ritmo, dibujar tu recorrido y guardar una carrera terminada en tu teléfono.\n\nPumaRun no crea cuentas, no muestra publicidad, no vende datos personales ni sube tus recorridos a un servidor de PumaRun. Las carreras guardadas permanecen en este dispositivo hasta que las elimines desde Recorridos o desinstales la aplicación.\n\nEl mapa carga mapas de OpenStreetMap. Las solicitudes de esos mapas pueden revelar al proveedor de mapas el área aproximada que estás viendo. Los datos de OpenStreetMap se ofrecen bajo la Open Database License; la atribución aparece en cada mapa.\n\nLos avisos de texto a voz son gestionados por el motor de texto a voz seleccionado en tu dispositivo. Según el motor, el procesamiento puede ser local o estar a cargo de su proveedor.\n\nPumaRun solicita permisos de ubicación y notificaciones únicamente para la experiencia de carrera. Puedes revocar los permisos desde los ajustes de Android. Para preguntas sobre privacidad, contacta al desarrollador desde la ficha de PumaRun en Play Store o en https://github.com/wecalderonc/PumaRun.</string>
 
     <!-- Setup -->
     <string name="setup_title">Nueva carrera</string>

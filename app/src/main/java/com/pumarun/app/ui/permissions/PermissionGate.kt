@@ -40,7 +40,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.pumarun.app.R
-import com.pumarun.app.ui.privacy.PrivacyPolicyDialog
+import com.pumarun.app.ui.privacy.openPrivacyPolicy
 
 private val requiredPermissions = buildList {
     add(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -62,7 +62,6 @@ fun PermissionGate(content: @Composable () -> Unit) {
     val context = LocalContext.current
     var granted by rememberSaveable { mutableStateOf(context.hasFineLocation()) }
     var permanentlyDenied by rememberSaveable { mutableStateOf(false) }
-    var showPrivacy by rememberSaveable { mutableStateOf(false) }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         granted = context.hasFineLocation()
@@ -122,10 +121,8 @@ fun PermissionGate(content: @Composable () -> Unit) {
                 Text(stringResource(R.string.perm_grant))
             }
         }
-        TextButton(onClick = { showPrivacy = true }) {
+        TextButton(onClick = { context.openPrivacyPolicy() }) {
             Text(stringResource(R.string.privacy_policy_button))
         }
     }
-
-    PrivacyPolicyDialog(visible = showPrivacy, onDismiss = { showPrivacy = false })
 }
