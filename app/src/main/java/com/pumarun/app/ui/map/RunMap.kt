@@ -186,7 +186,7 @@ private fun render(map: MapView, context: Context, position: LatLon?, track: Lis
 private fun configureOsmdroid(context: Context) {
     val config = Configuration.getInstance()
     config.userAgentValue =
-        "PumaRun/${BuildConfig.VERSION_NAME} (+https://github.com/wecalderonc/puma-concolor)"
+        "PumaRun/${BuildConfig.VERSION_NAME} (+https://github.com/wecalderonc/PumaRun)"
     config.osmdroidBasePath = File(context.cacheDir, "osmdroid")
     config.osmdroidTileCache = File(context.cacheDir, "osmdroid/tiles")
 }

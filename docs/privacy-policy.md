@@ -55,5 +55,5 @@ local app data. PumaRun does not create user accounts.
 
 For privacy questions, contact the developer through the PumaRun Google Play listing
 or the project repository:
-<https://github.com/wecalderonc/puma-concolor>
+<https://github.com/wecalderonc/PumaRun>
 

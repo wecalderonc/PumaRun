@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "puma-concolor"
+rootProject.name = "PumaRun"
 include(":app")
