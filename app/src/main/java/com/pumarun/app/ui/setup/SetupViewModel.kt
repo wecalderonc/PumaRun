@@ -27,6 +27,7 @@ data class SetupUiState(
     val goalError: Boolean = false,
     val targetError: Boolean = false,
     val intervalError: Boolean = false,
+    val warmupError: Boolean = false,
 )
 
 @HiltViewModel
@@ -58,7 +59,15 @@ class SetupViewModel @Inject constructor(
     }
 
     fun edit(transform: SetupPreferences.() -> SetupPreferences) {
-        _ui.update { it.copy(prefs = it.prefs.transform(), goalError = false, targetError = false, intervalError = false) }
+        _ui.update {
+            it.copy(
+                prefs = it.prefs.transform(),
+                goalError = false,
+                targetError = false,
+                intervalError = false,
+                warmupError = false,
+            )
+        }
     }
 
     fun testVoice() = voiceCoach.speakTest(_ui.value.prefs.coachStyle)
@@ -76,13 +85,19 @@ class SetupViewModel @Inject constructor(
         val goalMeters = parseGoalMeters(p)
         val target = parseTarget(p)
         val interval = parseInterval(p)
+        val warmup = parseWarmupMeters(p.warmupText)
 
         val targetInvalid = p.targetMode != TargetMode.None && target == null
         val intervalInvalid = p.announceOption == AnnounceOption.Custom && interval == null
         _ui.update {
-            it.copy(goalError = goalMeters == null, targetError = targetInvalid, intervalError = intervalInvalid)
+            it.copy(
+                goalError = goalMeters == null,
+                targetError = targetInvalid,
+                intervalError = intervalInvalid,
+                warmupError = warmup == null,
+            )
         }
-        if (goalMeters == null || targetInvalid || intervalInvalid) return null
+        if (goalMeters == null || warmup == null || targetInvalid || intervalInvalid) return null
 
         viewModelScope.launch { settings.save(p) }
         return SessionConfig(
@@ -93,6 +108,8 @@ class SetupViewModel @Inject constructor(
             backOnPaceEnabled = p.backOnPaceEnabled,
             autoStopAtGoal = p.autoStopAtGoal,
             coachStyle = p.coachStyle,
+            warmupMeters = warmup,
+            countdownLastKm = p.countdownLastKm,
         )
     }
 
@@ -122,5 +139,14 @@ class SetupViewModel @Inject constructor(
 
         fun parseInterval(p: SetupPreferences): Int? =
             p.customIntervalText.trim().toIntOrNull()?.takeIf { it in 50..100_000 }
+
+        /** Blank means no warm-up. */
+        fun parseWarmupMeters(text: String): Double? {
+            if (text.isBlank()) return 0.0
+            val meters = Units.parseDecimal(text) ?: return null
+            return meters.takeIf { it in 0.0..MAX_WARMUP_METERS }
+        }
+
+        private const val MAX_WARMUP_METERS = 20_000.0
     }
 }

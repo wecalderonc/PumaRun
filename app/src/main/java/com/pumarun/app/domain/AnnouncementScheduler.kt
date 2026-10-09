@@ -23,6 +23,10 @@ sealed interface Announcement {
     data object BackOnPace : Announcement
     data class Coach(val cue: CoachCue, val style: CoachStyle) : Announcement
     data class Finished(val distanceMeters: Double, val elapsedMs: Long) : Announcement
+    data class WarmupStarted(val meters: Double) : Announcement
+    data object WarmupHalfway : Announcement
+    /** Whole meters still to run: 900, 800, … 100. */
+    data class Remaining(val meters: Int) : Announcement
 }
 
 /**
@@ -32,6 +36,7 @@ sealed interface Announcement {
  * With a [CoachStyle] other than Off, repeated below-pace warnings become trainer pushes
  * (every [FACTS_EVERY_N_PUSHES]th one still states the numbers), on-pace running earns periodic
  * encouragement, and the finish gets "almost there" / last-200 m cheers.
+ * With [SessionConfig.countdownLastKm], the last kilometer instead calls out every 100 m left.
  */
 class AnnouncementScheduler(
     private val config: SessionConfig,
@@ -46,8 +51,12 @@ class AnnouncementScheduler(
     private var nextMilestoneMeters: Double? = config.announceIntervalMeters?.toDouble()
     private var halfwayAnnounced = config.goalMeters < minGoalForHalfwayMeters
     private var goalAnnounced = false
-    private var almostThereAnnounced = !style.cheersFinish || config.goalMeters < MIN_GOAL_FOR_FINISH_CHEERS
-    private var finalMetersAnnounced = !style.cheersFinish || config.goalMeters < MIN_GOAL_FOR_FINAL_METERS
+    private var almostThereAnnounced =
+        !style.cheersFinish || config.countdownLastKm || config.goalMeters < MIN_GOAL_FOR_FINISH_CHEERS
+    private var finalMetersAnnounced =
+        !style.cheersFinish || config.countdownLastKm || config.goalMeters < MIN_GOAL_FOR_FINAL_METERS
+    private var nextRemainingMeters: Int? =
+        if (config.countdownLastKm && config.goalMeters >= MIN_GOAL_FOR_COUNTDOWN) COUNTDOWN_START_METERS else null
 
     private var belowSinceMs: Long? = null
     private var lastAlertMs: Long? = null
@@ -96,8 +105,10 @@ class AnnouncementScheduler(
         } else if (halfwayNow) {
             halfwayAnnounced = true
             out += Announcement.Halfway(distance, state.elapsedMs)
+            remainingCountdown(distance)?.let { out += it }
         } else {
             milestone?.let { out += it }
+            remainingCountdown(distance)?.let { out += it }
         }
 
         val paceCue = evaluatePace(state)
@@ -179,11 +190,28 @@ class AnnouncementScheduler(
         return null
     }
 
+    /** Speaks the latest 100 m mark crossed (900, 800, …) and skips any marks a GPS jump passed. */
+    private fun remainingCountdown(distanceMeters: Double): Announcement? {
+        val next = nextRemainingMeters ?: return null
+        val remaining = config.goalMeters - distanceMeters
+        if (remaining > next) return null
+        var mark = next
+        var cursor = next - 100
+        while (cursor >= 100 && remaining <= cursor) {
+            mark = cursor
+            cursor -= 100
+        }
+        nextRemainingMeters = if (mark > 100) mark - 100 else null
+        return Announcement.Remaining(mark)
+    }
+
     companion object {
         const val FACTS_EVERY_N_PUSHES = 3
         private const val ALMOST_THERE_FRACTION = 0.85
         private const val FINAL_METERS = 200.0
         private const val MIN_GOAL_FOR_FINISH_CHEERS = 800.0
         private const val MIN_GOAL_FOR_FINAL_METERS = 2_000.0
+        private const val MIN_GOAL_FOR_COUNTDOWN = 1_000.0
+        private const val COUNTDOWN_START_METERS = 900
     }
 }

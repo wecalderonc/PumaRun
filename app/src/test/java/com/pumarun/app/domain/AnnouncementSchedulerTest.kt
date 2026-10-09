@@ -156,6 +156,58 @@ class AnnouncementSchedulerTest {
     }
 
     @Test
+    fun lastKilometerCountsDownByOneHundredMeters() {
+        val config = SessionConfig(goalMeters = 5_000.0, announceIntervalMeters = null, countdownLastKm = true)
+        val scheduler = AnnouncementScheduler(config)
+        val marks = (0..50).map { it * 100.0 }.flatMap { distance ->
+            scheduler.update(running(config, distance, 0))
+                .filterIsInstance<Announcement.Remaining>()
+                .map { it.meters }
+        }
+        assertEquals(listOf(900, 800, 700, 600, 500, 400, 300, 200, 100), marks)
+    }
+
+    @Test
+    fun lastKilometerJumpSpeaksOnlyTheLatestMark() {
+        val config = SessionConfig(goalMeters = 5_000.0, announceIntervalMeters = null, countdownLastKm = true)
+        val scheduler = AnnouncementScheduler(config)
+        assertTrue(scheduler.update(running(config, 4_000.0, 0)).none { it is Announcement.Remaining })
+        val jumped = scheduler.update(running(config, 4_350.0, 0))
+        assertEquals(listOf(700), jumped.filterIsInstance<Announcement.Remaining>().map { it.meters })
+        assertTrue(scheduler.update(running(config, 4_380.0, 0)).none { it is Announcement.Remaining })
+    }
+
+    @Test
+    fun reachingTheGoalDoesNotAlsoAnnounceMetersLeft() {
+        val config = SessionConfig(goalMeters = 5_000.0, announceIntervalMeters = null, countdownLastKm = true)
+        val events = AnnouncementScheduler(config).update(running(config, 5_000.0, 0))
+        assertTrue(events.single() is Announcement.GoalReached)
+    }
+
+    @Test
+    fun shortGoalsAndDisabledCountdownStayQuiet() {
+        val disabled = SessionConfig(goalMeters = 5_000.0, announceIntervalMeters = null, countdownLastKm = false)
+        val short = SessionConfig(goalMeters = 800.0, announceIntervalMeters = null, countdownLastKm = true)
+        assertTrue(AnnouncementScheduler(disabled).update(running(disabled, 4_500.0, 0)).none { it is Announcement.Remaining })
+        assertTrue(AnnouncementScheduler(short).update(running(short, 700.0, 0)).none { it is Announcement.Remaining })
+    }
+
+    @Test
+    fun countdownReplacesFinishCheers() {
+        val config = SessionConfig(
+            goalMeters = 5_000.0,
+            announceIntervalMeters = null,
+            countdownLastKm = true,
+            coachStyle = CoachStyle.Soft,
+        )
+        val scheduler = AnnouncementScheduler(config)
+        val spoken = (0..50).flatMap { scheduler.update(running(config, it * 100.0, 0)) }
+        assertTrue(spoken.any { it is Announcement.Remaining })
+        assertTrue(spoken.none { (it as? Announcement.Coach)?.cue == CoachCue.AlmostThere })
+        assertTrue(spoken.none { (it as? Announcement.Coach)?.cue == CoachCue.FinalMeters })
+    }
+
+    @Test
     fun backOnPaceCanBeDisabled() {
         val config = SessionConfig(
             goalMeters = 20_000.0, targetPaceSecPerKm = 300.0,

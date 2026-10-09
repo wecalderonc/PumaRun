@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,7 +18,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +54,7 @@ import com.pumarun.app.data.SessionRepository
 import com.pumarun.app.domain.Units
 import com.pumarun.app.ui.map.MapCamera
 import com.pumarun.app.ui.map.RunMap
+import com.pumarun.app.ui.theme.OffPaceRed
 import com.pumarun.app.ui.theme.OnPaceGreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -131,8 +138,14 @@ class TrackDetailViewModel @Inject constructor(
     private val _run = MutableStateFlow<SavedRun?>(null)
     val run = _run.asStateFlow()
 
+    private val _ready = MutableStateFlow(false)
+    val ready = _ready.asStateFlow()
+
     init {
-        viewModelScope.launch { id?.let { _run.value = repository.get(it) } }
+        viewModelScope.launch {
+            id?.let { _run.value = repository.get(it) }
+            _ready.value = true
+        }
     }
 
     fun delete(onDone: () -> Unit) {
@@ -146,8 +159,13 @@ class TrackDetailViewModel @Inject constructor(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrackDetailScreen(onBack: () -> Unit, viewModel: TrackDetailViewModel = hiltViewModel()) {
+fun TrackDetailScreen(
+    onBack: () -> Unit,
+    onNewRun: () -> Unit,
+    viewModel: TrackDetailViewModel = hiltViewModel(),
+) {
     val run by viewModel.run.collectAsStateWithLifecycle()
+    val ready by viewModel.ready.collectAsStateWithLifecycle()
     var confirmDelete by rememberSaveable { mutableStateOf(false) }
     val saved = run
 
@@ -170,35 +188,98 @@ fun TrackDetailScreen(onBack: () -> Unit, viewModel: TrackDetailViewModel = hilt
             )
         },
     ) { padding ->
-        if (saved == null) {
-            Text(
+        when {
+            !ready -> Column(
+                modifier = Modifier.fillMaxSize().padding(padding),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                CircularProgressIndicator()
+                Text(
+                    stringResource(R.string.tracks_loading),
+                    modifier = Modifier.padding(top = 12.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            saved == null -> Text(
                 stringResource(R.string.tracks_missing),
                 modifier = Modifier.padding(padding).padding(24.dp),
             )
-        } else {
-            Column(
-                modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
+            else -> Column(modifier = Modifier.fillMaxSize().padding(padding)) {
                 val end = saved.track.lastOrNull()?.lastOrNull()
                 if (end != null) {
                     RunMap(
                         position = end,
                         track = saved.track,
                         camera = MapCamera.FitRoute,
-                        modifier = Modifier.fillMaxWidth().weight(1f).clip(RoundedCornerShape(16.dp)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(280.dp)
+                            .padding(horizontal = 16.dp)
+                            .clip(RoundedCornerShape(16.dp)),
                     )
                 }
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        SummaryLine(stringResource(R.string.total_distance), "${Units.formatKm(saved.distanceMeters)} km")
-                        HorizontalDivider()
-                        SummaryLine(stringResource(R.string.total_time), Units.formatDuration(saved.elapsedMs))
-                        HorizontalDivider()
-                        SummaryLine(
-                            stringResource(R.string.average_pace),
-                            "${Units.formatPace(saved.avgPaceSecPerKm)} ${stringResource(R.string.per_km)}",
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.summary_title),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    saved.goalMeters?.let { goal ->
+                        Text(
+                            stringResource(if (saved.goalReached) R.string.goal_reached else R.string.goal_not_reached) +
+                                " · ${Units.formatKm(goal)} km",
+                            color = if (saved.goalReached) OnPaceGreen else MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.titleMedium,
                         )
+                    }
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            SummaryLine(stringResource(R.string.total_distance), "${Units.formatKm(saved.distanceMeters)} km")
+                            HorizontalDivider()
+                            SummaryLine(stringResource(R.string.total_time), Units.formatDuration(saved.elapsedMs))
+                            HorizontalDivider()
+                            SummaryLine(
+                                stringResource(R.string.average_pace),
+                                "${Units.formatPace(saved.avgPaceSecPerKm)} ${stringResource(R.string.per_km)}",
+                            )
+                            val pace = saved.targetPaceSecPerKm
+                            val goal = saved.goalMeters
+                            if (pace != null && goal != null) {
+                                val targetTime = pace * goal / 1000.0
+                                HorizontalDivider()
+                                SummaryLine(
+                                    stringResource(R.string.target),
+                                    "${Units.formatPace(pace)} ${stringResource(R.string.per_km)}",
+                                )
+                                HorizontalDivider()
+                                SummaryLine(stringResource(R.string.target_time_label), Units.formatDuration((targetTime * 1000).toLong()))
+                                saved.goalTimeMs?.let { goalMs ->
+                                    HorizontalDivider()
+                                    SummaryLine(stringResource(R.string.goal_time_label), Units.formatDuration(goalMs))
+                                    val delta = goalMs / 1000.0 - targetTime
+                                    val magnitude = Units.formatDelta(delta).drop(1)
+                                    Text(
+                                        stringResource(if (delta <= 0) R.string.beat_target else R.string.missed_target, magnitude),
+                                        color = if (delta <= 0) OnPaceGreen else OffPaceRed,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.End,
+                                    )
+                                }
+                                HorizontalDivider()
+                                SummaryLine(stringResource(R.string.pace_alerts_count), saved.paceAlertCount.toString())
+                            }
+                        }
+                    }
+                    Button(onClick = onNewRun, modifier = Modifier.fillMaxWidth().height(56.dp)) {
+                        Text(stringResource(R.string.new_run), fontWeight = FontWeight.Bold)
                     }
                 }
             }

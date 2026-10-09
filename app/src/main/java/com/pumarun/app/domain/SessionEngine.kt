@@ -21,8 +21,10 @@ class SessionEngine(
     private val segments = mutableListOf<MutableList<LatLon>>()
     private var track: List<List<LatLon>> = emptyList()
     private var startNewSegment = true
+    private var raceStarted = config.warmupMeters <= 0.0
 
     val isRunning: Boolean get() = runningSinceMs != null
+    val isWarmingUp: Boolean get() = !raceStarted
 
     fun start() {
         if (runningSinceMs == null) runningSinceMs = clock()
@@ -47,6 +49,7 @@ class SessionEngine(
         lastAccuracy = point.accuracyMeters
         if (!isRunning) return 0.0
         val result = filter.accept(point, clock())
+        var added = 0.0
         if (result is LocationFilter.Result.Accepted && (startNewSegment || result.segmentMeters > 0)) {
             if (startNewSegment) {
                 segments.add(mutableListOf())
@@ -56,12 +59,35 @@ class SessionEngine(
             track = segments.map { it.toList() }
             if (result.segmentMeters > 0) {
                 distanceMeters += result.segmentMeters
-                if (goalTimeMs == null && distanceMeters >= config.goalMeters) goalTimeMs = elapsedMs()
+                added = result.segmentMeters
+                if (raceStarted && goalTimeMs == null && distanceMeters >= config.goalMeters) {
+                    goalTimeMs = elapsedMs()
+                }
                 paceCalculator.add(elapsedMs(), distanceMeters)
-                return result.segmentMeters
             }
         }
-        return 0.0
+        if (!raceStarted && config.warmupMeters > 0 && distanceMeters >= config.warmupMeters) beginRace()
+        return added
+    }
+
+    /** Drops warm-up distance and time so the goal clock starts at the current spot. */
+    private fun beginRace() {
+        raceStarted = true
+        accumulatedMs = 0L
+        runningSinceMs = clock()
+        distanceMeters = 0.0
+        goalTimeMs = null
+        paceCalculator.reset()
+        val here = position
+        segments.clear()
+        if (here != null) {
+            segments.add(mutableListOf(here))
+            startNewSegment = false
+            track = listOf(listOf(here))
+        } else {
+            startNewSegment = true
+            track = emptyList()
+        }
     }
 
     /** Called periodically (about 1 Hz) so pace decays toward "stopped" when no movement arrives. */
@@ -80,8 +106,9 @@ class SessionEngine(
             gpsAccuracyMeters = lastAccuracy,
             position = position,
             track = track,
-            goalReached = distanceMeters >= config.goalMeters,
+            goalReached = raceStarted && distanceMeters >= config.goalMeters,
             goalTimeMs = goalTimeMs,
+            warmingUp = !raceStarted,
         )
     }
 }

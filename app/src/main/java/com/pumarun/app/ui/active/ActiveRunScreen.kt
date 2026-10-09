@@ -119,16 +119,27 @@ private fun RunDashboard(state: SessionState, onPause: () -> Unit, onResume: () 
                 Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)) {
                     if (state.status == SessionStatus.Paused) {
                         Text(stringResource(R.string.paused), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                    } else if (state.warmingUp) {
+                        Text(stringResource(R.string.warmup_badge), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                     } else if (state.goalReached) {
                         Text(stringResource(R.string.goal_reached_badge), color = OnPaceGreen, fontWeight = FontWeight.Bold)
                     }
-                    Text(Units.formatKm(state.distanceMeters), fontSize = 40.sp, fontWeight = FontWeight.Black)
-                    config?.let {
+                    if (state.warmingUp) {
+                        Text("${state.distanceMeters.toInt()}", fontSize = 40.sp, fontWeight = FontWeight.Black)
                         Text(
-                            stringResource(R.string.of_goal, Units.formatKm(it.goalMeters)),
+                            stringResource(R.string.of_warmup, config?.warmupMeters?.toInt() ?: 0),
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
+                    } else {
+                        Text(Units.formatKm(state.distanceMeters), fontSize = 40.sp, fontWeight = FontWeight.Black)
+                        config?.let {
+                            Text(
+                                stringResource(R.string.of_goal, Units.formatKm(it.goalMeters)),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
             }
@@ -143,7 +154,7 @@ private fun RunDashboard(state: SessionState, onPause: () -> Unit, onResume: () 
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(Units.formatDuration(state.elapsedMs), fontSize = 48.sp, fontWeight = FontWeight.Bold)
-            state.scheduleDeltaSec?.takeIf { !state.goalReached }?.let { delta ->
+            state.scheduleDeltaSec?.takeIf { !state.goalReached && !state.warmingUp }?.let { delta ->
                 val behind = delta > 0
                 Text(
                     stringResource(

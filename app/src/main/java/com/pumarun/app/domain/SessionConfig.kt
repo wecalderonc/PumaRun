@@ -12,9 +12,14 @@ data class SessionConfig(
     val backOnPaceEnabled: Boolean = true,
     val autoStopAtGoal: Boolean = false,
     val coachStyle: CoachStyle = CoachStyle.Off,
+    /** Distance to cover after the countdown before the timed run starts on its own. */
+    val warmupMeters: Double = 0.0,
+    /** Speak every 100 m of distance left during the final kilometer. */
+    val countdownLastKm: Boolean = false,
 ) {
     init {
         require(goalMeters > 0) { "goalMeters must be positive" }
+        require(warmupMeters >= 0) { "warmupMeters must be non-negative" }
         require(announceIntervalMeters == null || announceIntervalMeters > 0)
     }
 
@@ -30,6 +35,8 @@ data class SessionConfig(
         putExtra(EXTRA_BACK_ON_PACE, backOnPaceEnabled)
         putExtra(EXTRA_AUTO_STOP, autoStopAtGoal)
         putExtra(EXTRA_COACH, coachStyle.name)
+        putExtra(EXTRA_WARMUP, warmupMeters)
+        putExtra(EXTRA_LAST_KM, countdownLastKm)
     }
 
     companion object {
@@ -40,6 +47,8 @@ data class SessionConfig(
         private const val EXTRA_BACK_ON_PACE = "config.backOnPace"
         private const val EXTRA_AUTO_STOP = "config.autoStop"
         private const val EXTRA_COACH = "config.coach"
+        private const val EXTRA_WARMUP = "config.warmup"
+        private const val EXTRA_LAST_KM = "config.lastKm"
 
         fun fromIntent(intent: Intent): SessionConfig? {
             val goal = intent.getDoubleExtra(EXTRA_GOAL, -1.0)
@@ -55,6 +64,8 @@ data class SessionConfig(
                 backOnPaceEnabled = intent.getBooleanExtra(EXTRA_BACK_ON_PACE, true),
                 autoStopAtGoal = intent.getBooleanExtra(EXTRA_AUTO_STOP, false),
                 coachStyle = CoachStyle.entries.firstOrNull { it.name == coach } ?: CoachStyle.Off,
+                warmupMeters = intent.getDoubleExtra(EXTRA_WARMUP, 0.0).coerceAtLeast(0.0),
+                countdownLastKm = intent.getBooleanExtra(EXTRA_LAST_KM, false),
             )
         }
     }

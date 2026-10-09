@@ -1,6 +1,6 @@
 package com.pumarun.app.domain
 
-enum class SessionStatus { Idle, Countdown, Running, Paused, Finished }
+enum class SessionStatus { Idle, Countdown, Warmup, Running, Paused, Finished }
 
 data class SessionState(
     val status: SessionStatus = SessionStatus.Idle,
@@ -19,13 +19,20 @@ data class SessionState(
     /** Active time at the moment the goal distance was first reached. */
     val goalTimeMs: Long? = null,
     val paceAlertCount: Int = 0,
+    /** True while distance is still counting toward the warm-up, not the goal. */
+    val warmingUp: Boolean = false,
 ) {
     val isActive: Boolean
-        get() = status == SessionStatus.Countdown || status == SessionStatus.Running ||
-            status == SessionStatus.Paused
+        get() = status == SessionStatus.Countdown || status == SessionStatus.Warmup ||
+            status == SessionStatus.Running || status == SessionStatus.Paused
 
     val progress: Float
-        get() = config?.let { (distanceMeters / it.goalMeters).toFloat().coerceIn(0f, 1f) } ?: 0f
+        get() {
+            val cfg = config ?: return 0f
+            val total = if (warmingUp && cfg.warmupMeters > 0) cfg.warmupMeters else cfg.goalMeters
+            if (total <= 0) return 0f
+            return (distanceMeters / total).toFloat().coerceIn(0f, 1f)
+        }
 
     val isBelowTarget: Boolean
         get() {

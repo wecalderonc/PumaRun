@@ -98,4 +98,58 @@ class SessionEngineTest {
         assertTrue(after.track[1].size >= 2)
         assertEquals(last.latitude, after.position!!.latitude, 1e-6)
     }
+
+    @Test
+    fun warmupDoesNotCountTowardTheGoalAndTheClockRestarts() {
+        var clock = 0L
+        val warming = SessionEngine(
+            SessionConfig(goalMeters = 200.0, warmupMeters = 100.0),
+            clock = { clock },
+        )
+        warming.start()
+        warming.onLocation(north(0.0, clock))
+        var traveled = 0.0
+        repeat(28) {
+            clock += 1_000
+            traveled += 3.0
+            warming.onLocation(north(traveled, clock))
+        }
+        val during = warming.snapshot(SessionState())
+        assertTrue(during.warmingUp)
+        assertFalse(during.goalReached)
+        assertTrue("warmup distance ${during.distanceMeters}", during.distanceMeters in 60.0..99.0)
+
+        repeat(40) {
+            clock += 1_000
+            traveled += 3.0
+            warming.onLocation(north(traveled, clock))
+        }
+        val race = warming.snapshot(SessionState())
+        assertFalse(race.warmingUp)
+        assertTrue("race distance ${race.distanceMeters}", race.distanceMeters in 20.0..140.0)
+        assertTrue("race clock ${race.elapsedMs} vs total $clock", race.elapsedMs < clock - 20_000)
+        assertFalse(race.goalReached)
+        assertEquals(1, race.track.size)
+    }
+
+    @Test
+    fun warmupLongerThanTheGoalDoesNotFinishTheRun() {
+        var clock = 0L
+        val engine = SessionEngine(
+            SessionConfig(goalMeters = 50.0, warmupMeters = 120.0),
+            clock = { clock },
+        )
+        engine.start()
+        engine.onLocation(north(0.0, clock))
+        var traveled = 0.0
+        repeat(30) {
+            clock += 1_000
+            traveled += 3.0
+            engine.onLocation(north(traveled, clock))
+        }
+        val during = engine.snapshot(SessionState())
+        assertTrue(during.warmingUp)
+        assertTrue(during.distanceMeters > 50.0)
+        assertFalse(during.goalReached)
+    }
 }

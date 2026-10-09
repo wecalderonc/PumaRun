@@ -34,7 +34,6 @@ import com.pumarun.app.ui.history.HistoryScreen
 import com.pumarun.app.ui.history.TrackDetailScreen
 import com.pumarun.app.ui.permissions.PermissionGate
 import com.pumarun.app.ui.setup.SetupScreen
-import com.pumarun.app.ui.summary.SummaryScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -44,7 +43,6 @@ import javax.inject.Inject
 object Routes {
     const val SETUP = "setup"
     const val ACTIVE = "active"
-    const val SUMMARY = "summary"
     const val HISTORY = "history"
     const val HISTORY_DETAIL = "history/{id}"
 
@@ -54,10 +52,12 @@ object Routes {
 private val idleRoutes = setOf(Routes.SETUP, Routes.HISTORY, Routes.HISTORY_DETAIL)
 
 @HiltViewModel
-class NavViewModel @Inject constructor(sessionManager: SessionManager) : ViewModel() {
+class NavViewModel @Inject constructor(private val sessionManager: SessionManager) : ViewModel() {
     val status = sessionManager.state
         .map { it.status }
         .stateIn(viewModelScope, SharingStarted.Eagerly, sessionManager.state.value.status)
+    val openRunId = sessionManager.openRunId
+    fun consumeOpenRun() = sessionManager.consumeOpenRun()
 }
 
 /** Screens follow the session status, so reopening the app mid-run lands on the active screen. */
@@ -65,15 +65,26 @@ class NavViewModel @Inject constructor(sessionManager: SessionManager) : ViewMod
 fun PumaNavHost(navViewModel: NavViewModel = hiltViewModel()) {
     val navController = rememberNavController()
     val status by navViewModel.status.collectAsStateWithLifecycle()
+    val openRunId by navViewModel.openRunId.collectAsStateWithLifecycle()
     val current by navController.currentBackStackEntryAsState()
     val route = current?.destination?.route
 
-    LaunchedEffect(status) {
+    LaunchedEffect(status, openRunId) {
         val currentRoute = navController.currentDestination?.route
+        val savedId = openRunId
+        if (savedId != null) {
+            navController.navigate(Routes.historyDetail(savedId)) {
+                popUpTo(navController.graph.findStartDestination().id) { inclusive = false }
+                launchSingleTop = true
+            }
+            navViewModel.consumeOpenRun()
+            return@LaunchedEffect
+        }
         val target = when (status) {
             SessionStatus.Idle -> if (currentRoute in idleRoutes) null else Routes.SETUP
-            SessionStatus.Countdown, SessionStatus.Running, SessionStatus.Paused -> Routes.ACTIVE
-            SessionStatus.Finished -> Routes.SUMMARY
+            SessionStatus.Countdown, SessionStatus.Warmup, SessionStatus.Running, SessionStatus.Paused ->
+                Routes.ACTIVE
+            SessionStatus.Finished -> null
         }
         if (target != null && currentRoute != target) {
             navController.navigate(target) {
@@ -125,7 +136,6 @@ fun PumaNavHost(navViewModel: NavViewModel = hiltViewModel()) {
                 PermissionGate { SetupScreen() }
             }
             composable(Routes.ACTIVE) { ActiveRunScreen() }
-            composable(Routes.SUMMARY) { SummaryScreen() }
             composable(Routes.HISTORY) {
                 HistoryScreen(onOpen = { id -> navController.navigate(Routes.historyDetail(id)) })
             }
@@ -133,7 +143,16 @@ fun PumaNavHost(navViewModel: NavViewModel = hiltViewModel()) {
                 Routes.HISTORY_DETAIL,
                 arguments = listOf(navArgument("id") { type = NavType.LongType }),
             ) {
-                TrackDetailScreen(onBack = { navController.popBackStack() })
+                TrackDetailScreen(
+                    onBack = { navController.popBackStack() },
+                    onNewRun = {
+                        navController.navigate(Routes.SETUP) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
             }
         }
     }

@@ -28,12 +28,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.pumarun.app.BuildConfig
 import com.pumarun.app.R
 import com.pumarun.app.domain.LatLon
+import com.pumarun.app.domain.TrackSimplifier
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
@@ -104,7 +106,8 @@ fun RunMap(
             factory = { mapView },
             modifier = Modifier.fillMaxSize(),
             update = { map ->
-                render(map, context, position, track)
+                val drawn = TrackSimplifier.simplify(track)
+                render(map, context, position, drawn)
                 when {
                     follow && position != null -> {
                         ignoreScrollUntil = SystemClock.uptimeMillis() + PROGRAMMATIC_MS
@@ -112,12 +115,10 @@ fun RunMap(
                         if (map.zoomLevelDouble < FOLLOW_ZOOM - 1) map.controller.setZoom(FOLLOW_ZOOM)
                         map.controller.setCenter(target)
                     }
-                    camera == MapCamera.FitRoute -> {
-                        val points = track.flatten().map { GeoPoint(it.latitude, it.longitude) }
-                        if (points.size >= 2) {
-                            ignoreScrollUntil = SystemClock.uptimeMillis() + PROGRAMMATIC_MS
-                            map.zoomToBoundingBox(BoundingBox.fromGeoPoints(points), false, FIT_PADDING_PX)
-                        }
+                    camera == MapCamera.FitRoute && map.getTag(R.id.map_fit_track) != drawn -> {
+                        // Fitting during layout asks the map to lay out again and freezes the screen.
+                        map.setTag(R.id.map_fit_track, drawn)
+                        map.doOnLayout { fitRoute(map, drawn) }
                     }
                 }
                 map.invalidate()
@@ -156,6 +157,27 @@ fun RunMap(
                 style = MaterialTheme.typography.labelSmall,
             )
         }
+    }
+}
+
+private fun fitRoute(map: MapView, track: List<List<LatLon>>, allowRetry: Boolean = true) {
+    if (map.width <= FIT_PADDING_PX * 2 || map.height <= FIT_PADDING_PX * 2) {
+        if (allowRetry) map.doOnLayout { fitRoute(map, track, allowRetry = false) }
+        return
+    }
+    val points = track.flatten().mapNotNull { point ->
+        if (!point.latitude.isFinite() || !point.longitude.isFinite()) return@mapNotNull null
+        if (point.latitude !in -90.0..90.0 || point.longitude !in -180.0..180.0) return@mapNotNull null
+        GeoPoint(point.latitude, point.longitude)
+    }
+    if (points.size < 2) {
+        points.firstOrNull()?.let { map.controller.setCenter(it) }
+        return
+    }
+    try {
+        map.zoomToBoundingBox(BoundingBox.fromGeoPoints(points), false, FIT_PADDING_PX)
+    } catch (_: RuntimeException) {
+        map.controller.setCenter(points.last())
     }
 }
 

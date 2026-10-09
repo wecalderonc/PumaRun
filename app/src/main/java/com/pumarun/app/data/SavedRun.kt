@@ -10,5 +10,8 @@ data class SavedRun(
     val avgPaceSecPerKm: Double?,
     val goalMeters: Double?,
     val goalReached: Boolean,
-    val track: List<List<LatLon>>,
+    val targetPaceSecPerKm: Double? = null,
+    val goalTimeMs: Long? = null,
+    val paceAlertCount: Int = 0,
+    val track: List<List<LatLon>> = emptyList(),
 )

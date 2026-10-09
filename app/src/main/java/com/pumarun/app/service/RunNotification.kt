@@ -32,6 +32,7 @@ object RunNotification {
     fun build(context: Context, state: SessionState): Notification {
         val title = when (state.status) {
             SessionStatus.Paused -> context.getString(R.string.notif_title_paused)
+            SessionStatus.Warmup -> context.getString(R.string.notif_title_warmup)
             SessionStatus.Countdown, SessionStatus.Idle -> context.getString(R.string.notif_title_countdown)
             else -> context.getString(R.string.notif_title_running)
         }
@@ -62,7 +63,7 @@ object RunNotification {
             .setProgress(1000, (state.progress * 1000).toInt(), false)
 
         when (state.status) {
-            SessionStatus.Running -> builder.addAction(
+            SessionStatus.Running, SessionStatus.Warmup -> builder.addAction(
                 0, context.getString(R.string.action_pause),
                 serviceAction(context, RunTrackingService.ACTION_PAUSE, 1),
             )

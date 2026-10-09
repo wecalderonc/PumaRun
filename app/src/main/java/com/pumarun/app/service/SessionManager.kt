@@ -39,15 +39,24 @@ class SessionManager @Inject constructor(
     private val _state = MutableStateFlow(SessionState())
     val state: StateFlow<SessionState> = _state.asStateFlow()
 
+    private val _openRunId = MutableStateFlow<Long?>(null)
+    val openRunId: StateFlow<Long?> = _openRunId.asStateFlow()
+
     private var engine: SessionEngine? = null
     private var scheduler: AnnouncementScheduler? = null
     private var countdownJob: Job? = null
     private var locationJob: Job? = null
     private var tickerJob: Job? = null
+    private var warmupHalfwaySpoken = false
+
+    fun consumeOpenRun() {
+        _openRunId.value = null
+    }
 
     fun start(config: SessionConfig) {
         if (_state.value.isActive) return
         voice.ensureInitialized()
+        warmupHalfwaySpoken = false
         engine = SessionEngine(config, clock = SystemClock::elapsedRealtime)
         scheduler = AnnouncementScheduler(config)
         _state.value = SessionState(status = SessionStatus.Countdown, config = config, countdownSeconds = COUNTDOWN_SECONDS)
@@ -74,9 +83,16 @@ class SessionManager @Inject constructor(
 
     private fun beginRunning() {
         val e = engine ?: return
+        val warmupMeters = _state.value.config?.warmupMeters ?: 0.0
         e.start()
-        _state.value = _state.value.copy(status = SessionStatus.Running, countdownSeconds = 0)
-        voice.announce(Announcement.Started)
+        val warming = warmupMeters > 0
+        _state.value = _state.value.copy(
+            status = if (warming) SessionStatus.Warmup else SessionStatus.Running,
+            countdownSeconds = 0,
+            warmingUp = warming,
+        )
+        if (warming) voice.announce(Announcement.WarmupStarted(warmupMeters))
+        else voice.announce(Announcement.Started)
         tickerJob = scope.launch {
             while (isActive) {
                 delay(TICK_MS)
@@ -87,7 +103,8 @@ class SessionManager @Inject constructor(
     }
 
     fun pause() {
-        if (_state.value.status != SessionStatus.Running) return
+        val status = _state.value.status
+        if (status != SessionStatus.Running && status != SessionStatus.Warmup) return
         engine?.pause()
         _state.value = _state.value.copy(status = SessionStatus.Paused)
         publish()
@@ -97,7 +114,8 @@ class SessionManager @Inject constructor(
     fun resume() {
         if (_state.value.status != SessionStatus.Paused) return
         engine?.resume()
-        _state.value = _state.value.copy(status = SessionStatus.Running)
+        val status = if (engine?.isWarmingUp == true) SessionStatus.Warmup else SessionStatus.Running
+        _state.value = _state.value.copy(status = status, warmingUp = status == SessionStatus.Warmup)
         publish()
         voice.announce(Announcement.Resumed)
     }
@@ -109,7 +127,7 @@ class SessionManager @Inject constructor(
         tickerJob?.cancel()
         locationJob?.cancel()
 
-        if (current.status == SessionStatus.Countdown) {
+        if (current.status == SessionStatus.Countdown || engine?.isWarmingUp == true) {
             voice.stop()
             clear()
             _state.value = SessionState()
@@ -120,12 +138,17 @@ class SessionManager @Inject constructor(
         e?.pause()
         val final = (e?.snapshot(current) ?: current).copy(
             status = SessionStatus.Finished,
+            warmingUp = false,
             paceAlertCount = scheduler?.paceAlertCount ?: current.paceAlertCount,
         )
         _state.value = final
         voice.announce(Announcement.Finished(final.distanceMeters, final.elapsedMs))
         clear()
-        scope.launch { repository.save(final) }
+        scope.launch {
+            val id = repository.save(final)
+            if (id != null) _openRunId.value = id
+            _state.value = SessionState()
+        }
     }
 
     /** Returns to Idle after the summary has been shown. */
@@ -146,10 +169,23 @@ class SessionManager @Inject constructor(
         val e = engine ?: return
         val base = _state.value
         var next = e.snapshot(base)
-        scheduler?.let { s ->
-            val announcements = s.update(next)
-            next = next.copy(paceAlertCount = s.paceAlertCount)
-            announcements.forEach(voice::announce)
+        if (base.status == SessionStatus.Warmup && !next.warmingUp) {
+            next = next.copy(status = SessionStatus.Running)
+            voice.announce(Announcement.Started)
+        }
+        val config = next.config
+        if (next.status == SessionStatus.Warmup && config != null && !warmupHalfwaySpoken &&
+            config.warmupMeters >= 200 && next.distanceMeters >= config.warmupMeters / 2.0
+        ) {
+            warmupHalfwaySpoken = true
+            voice.announce(Announcement.WarmupHalfway)
+        }
+        if (next.status == SessionStatus.Running) {
+            scheduler?.let { s ->
+                val announcements = s.update(next)
+                next = next.copy(paceAlertCount = s.paceAlertCount)
+                announcements.forEach(voice::announce)
+            }
         }
         _state.value = next
 

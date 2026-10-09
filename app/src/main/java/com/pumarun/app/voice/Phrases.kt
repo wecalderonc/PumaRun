@@ -45,12 +45,12 @@ class Phrases @Inject constructor(
                 val dist = distance(r, locale, announcement.distanceMeters)
                 val time = duration(r, announcement.elapsedMs)
                 val base = announcement.avgPaceSecPerKm?.let {
-                    r.getString(R.string.tts_milestone, dist, time, pace(r, it))
-                } ?: r.getString(R.string.tts_milestone_no_pace, dist, time)
-                announcement.scheduleDeltaSec?.let { "$base ${schedule(r, it)}" } ?: base
+                    phrase(r, locale, R.array.tts_milestone, dist, time, pace(r, it))
+                } ?: phrase(r, locale, R.array.tts_milestone_no_pace, dist, time)
+                announcement.scheduleDeltaSec?.let { "$base ${schedule(r, locale, it)}" } ?: base
             }
-            is Announcement.Halfway -> r.getString(
-                R.string.tts_halfway,
+            is Announcement.Halfway -> phrase(
+                r, locale, R.array.tts_halfway,
                 distance(r, locale, announcement.distanceMeters),
                 duration(r, announcement.elapsedMs),
             )
@@ -58,8 +58,8 @@ class Phrases @Inject constructor(
                 val dist = distance(r, locale, announcement.goalMeters)
                 val time = duration(r, announcement.elapsedMs)
                 val base = announcement.avgPaceSecPerKm?.let {
-                    r.getString(R.string.tts_goal_pace, dist, time, pace(r, it))
-                } ?: r.getString(R.string.tts_goal, dist, time)
+                    phrase(r, locale, R.array.tts_goal_pace, dist, time, pace(r, it))
+                } ?: phrase(r, locale, R.array.tts_goal, dist, time)
                 announcement.scheduleDeltaSec?.let { delta ->
                     val seconds = abs(delta).roundToInt()
                     val verdict = when {
@@ -71,17 +71,22 @@ class Phrases @Inject constructor(
                 } ?: base
             }
             is Announcement.Coach -> coachLine(r, announcement.cue, announcement.style)
-            is Announcement.BelowPace -> r.getString(
-                R.string.tts_below_pace,
+            is Announcement.BelowPace -> phrase(
+                r, locale, R.array.tts_below_pace,
                 pace(r, announcement.currentPaceSecPerKm),
                 pace(r, announcement.targetPaceSecPerKm),
             )
-            Announcement.BackOnPace -> r.getString(R.string.tts_back_on_pace)
-            is Announcement.Finished -> r.getString(
-                R.string.tts_finished,
+            Announcement.BackOnPace -> pick(r, R.array.tts_back_on_pace)
+            is Announcement.Finished -> phrase(
+                r, locale, R.array.tts_finished,
                 distance(r, locale, announcement.distanceMeters),
                 duration(r, announcement.elapsedMs),
             )
+            is Announcement.WarmupStarted ->
+                r.getString(R.string.tts_warmup, distance(r, locale, announcement.meters))
+            Announcement.WarmupHalfway -> r.getString(R.string.tts_warmup_half)
+            is Announcement.Remaining ->
+                phrase(r, locale, R.array.tts_remaining, distance(r, locale, announcement.meters.toDouble()))
         }
     }
 
@@ -91,26 +96,34 @@ class Phrases @Inject constructor(
     fun coachSample(style: CoachStyle, locale: Locale): String? =
         if (style == CoachStyle.Off) null else coachLine(res(locale), CoachCue.Push, style)
 
-    private fun schedule(r: Resources, deltaSec: Double): String {
+    private fun schedule(r: Resources, locale: Locale, deltaSec: Double): String {
         val seconds = abs(deltaSec).roundToInt()
+        val spoken = duration(r, seconds * 1000L)
         return when {
-            seconds < ON_TARGET_SECONDS -> r.getString(R.string.tts_on_target)
-            deltaSec < 0 -> r.getString(R.string.tts_ahead, duration(r, seconds * 1000L))
-            else -> r.getString(R.string.tts_behind, duration(r, seconds * 1000L))
+            seconds < ON_TARGET_SECONDS -> pick(r, R.array.tts_on_target)
+            deltaSec < 0 -> phrase(r, locale, R.array.tts_ahead, spoken)
+            else -> phrase(r, locale, R.array.tts_behind, spoken)
         }
     }
 
     private val lastPick = mutableMapOf<Int, Int>()
 
-    private fun coachLine(r: Resources, cue: CoachCue, style: CoachStyle): String {
-        val arrayId = coachArray(cue, style) ?: return r.getString(R.string.tts_back_on_pace)
+    private fun phrase(r: Resources, locale: Locale, arrayId: Int, vararg args: Any): String =
+        String.format(locale, pick(r, arrayId), *args)
+
+    /** Picks a line and will not repeat the previous one from the same pool. */
+    private fun pick(r: Resources, arrayId: Int): String {
         val options = r.getStringArray(arrayId)
-        // Never repeat the previous line from the same pool back to back.
         val previous = lastPick[arrayId]
         val candidates = options.indices.filter { it != previous || options.size == 1 }
         val index = candidates[Random.nextInt(candidates.size)]
         lastPick[arrayId] = index
         return options[index]
+    }
+
+    private fun coachLine(r: Resources, cue: CoachCue, style: CoachStyle): String {
+        val arrayId = coachArray(cue, style) ?: return pick(r, R.array.tts_back_on_pace)
+        return pick(r, arrayId)
     }
 
     private fun coachArray(cue: CoachCue, style: CoachStyle): Int? = when (style) {

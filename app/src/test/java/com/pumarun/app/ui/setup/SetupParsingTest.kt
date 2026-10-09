@@ -47,4 +47,12 @@ class SetupParsingTest {
         assertEquals(298.6, SetupViewModel.parseTarget(half)!!, 0.1)
         assertNull(SetupViewModel.parseTarget(today.copy(targetTimeText = "2:00")))
     }
+
+    @Test
+    fun warmupBlankIsZeroAndNonsenseIsRejected() {
+        assertEquals(0.0, SetupViewModel.parseWarmupMeters("")!!, 0.0)
+        assertEquals(400.0, SetupViewModel.parseWarmupMeters("400")!!, 0.0)
+        assertNull(SetupViewModel.parseWarmupMeters("no"))
+        assertNull(SetupViewModel.parseWarmupMeters("-20"))
+    }
 }

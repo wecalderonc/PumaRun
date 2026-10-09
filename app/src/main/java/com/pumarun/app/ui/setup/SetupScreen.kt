@@ -77,6 +77,7 @@ import com.pumarun.app.voice.VoiceCoach
 import kotlinx.coroutines.launch
 
 private val quickGoals = listOf("1", "3", "5", "10", "21.1")
+private val warmupChoices = listOf(0, 200, 400, 800, 1000)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -183,6 +184,36 @@ fun SetupScreen(viewModel: SetupViewModel = hiltViewModel()) {
                         )
                     }
                 }
+            }
+
+            Section(stringResource(R.string.warmup_label)) {
+                val warmupMeters = SetupViewModel.parseWarmupMeters(p.warmupText)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    warmupChoices.forEach { meters ->
+                        val label = when (meters) {
+                            0 -> stringResource(R.string.warmup_none)
+                            1000 -> "1 km"
+                            else -> "$meters m"
+                        }
+                        FilterChip(
+                            selected = warmupMeters == meters.toDouble(),
+                            onClick = { viewModel.edit { copy(warmupText = if (meters == 0) "" else meters.toString()) } },
+                            label = { Text(label) },
+                        )
+                    }
+                }
+                OutlinedTextField(
+                    value = p.warmupText,
+                    onValueChange = { v -> viewModel.edit { copy(warmupText = v) } },
+                    label = { Text(stringResource(R.string.unit_m)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = ui.warmupError,
+                    supportingText = {
+                        Text(stringResource(if (ui.warmupError) R.string.error_warmup else R.string.warmup_hint))
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                )
             }
 
             Section(stringResource(R.string.target_label)) {
@@ -325,6 +356,12 @@ fun SetupScreen(viewModel: SetupViewModel = hiltViewModel()) {
                     checked = p.autoStopAtGoal,
                     enabled = true,
                     onChange = { v -> viewModel.edit { copy(autoStopAtGoal = v) } },
+                )
+                SwitchRow(
+                    text = stringResource(R.string.last_km_countdown),
+                    checked = p.countdownLastKm,
+                    enabled = true,
+                    onChange = { v -> viewModel.edit { copy(countdownLastKm = v) } },
                 )
             }
 

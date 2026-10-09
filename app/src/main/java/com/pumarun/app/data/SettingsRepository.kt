@@ -34,6 +34,8 @@ data class SetupPreferences(
     val backOnPaceEnabled: Boolean = true,
     val autoStopAtGoal: Boolean = false,
     val coachStyle: CoachStyle = CoachStyle.Medium,
+    val warmupText: String = "",
+    val countdownLastKm: Boolean = false,
 )
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -55,6 +57,8 @@ class SettingsRepository @Inject constructor(
         val PACE_ALERTS = booleanPreferencesKey("pace_alerts")
         val BACK_ON_PACE = booleanPreferencesKey("back_on_pace")
         val AUTO_STOP = booleanPreferencesKey("auto_stop")
+        val WARMUP = stringPreferencesKey("warmup")
+        val LAST_KM = booleanPreferencesKey("last_km")
         val VERSION = intPreferencesKey("version")
     }
 
@@ -73,6 +77,8 @@ class SettingsRepository @Inject constructor(
             paceAlertsEnabled = p[Keys.PACE_ALERTS] ?: d.paceAlertsEnabled,
             backOnPaceEnabled = p[Keys.BACK_ON_PACE] ?: d.backOnPaceEnabled,
             autoStopAtGoal = p[Keys.AUTO_STOP] ?: d.autoStopAtGoal,
+            warmupText = p[Keys.WARMUP] ?: d.warmupText,
+            countdownLastKm = p[Keys.LAST_KM] ?: d.countdownLastKm,
         )
     }
 
@@ -93,6 +99,8 @@ class SettingsRepository @Inject constructor(
             p[Keys.PACE_ALERTS] = prefs.paceAlertsEnabled
             p[Keys.BACK_ON_PACE] = prefs.backOnPaceEnabled
             p[Keys.AUTO_STOP] = prefs.autoStopAtGoal
+            p[Keys.WARMUP] = prefs.warmupText
+            p[Keys.LAST_KM] = prefs.countdownLastKm
         }
     }
 
